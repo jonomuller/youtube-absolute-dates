@@ -1,10 +1,10 @@
-function onClientLoad() {
-  console.log('onClientLoad');
-  gapi.client.load('youtube', 'v3', function() {
-    gapi.client.setApiKey(config.API_KEY);
-    safari.application.activeBrowserWindow.activeTab.page.dispatchMessage('clientLoaded');
-  });
-}
+// function onClientLoad() {
+//   console.log('onClientLoad');
+//   gapi.client.load('youtube', 'v3', function() {
+//     gapi.client.setApiKey(config.API_KEY);
+//     safari.application.activeBrowserWindow.activeTab.page.dispatchMessage('clientLoaded');
+//   });
+// }
 
 function handleMessage(event) {
   console.log('received message');
@@ -18,18 +18,26 @@ function handleMessage(event) {
 }
 
 function search(event) {
-  console.log(gapi);
-  console.log("test");
+  var element = JSON.parse(event.message);
+  var xmlHttp = new XMLHttpRequest();
 
-  var request = gapi.client.youtube.search.list({
-    part: 'id'
-  });
+  xmlHttp.onreadystatechange = function() { 
+      if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+        var response = JSON.parse(xmlHttp.responseText);
+        console.log(response.items);
+        var date = response.items[0].snippet.publishedAt;
+        console.log(date);
+        var newElement = {
+          selector: element.selector,
+          date: date
+        }
+        event.target.page.dispatchMessage('videoDetails', JSON.stringify(newElement));
+      }
+  }
 
-  request.execute(function(response) {
-    var responseString = JSON.stringify(response, '', 2);
-    console.log(responseString);
-    event.target.page.dispatchMessage('videoDetails', 300);
-  });
+  var url = 'https://www.googleapis.com/youtube/v3/videos?part=snippet&id=' + element.id + '&key=' + config.API_KEY;
+  xmlHttp.open("GET", url, true); // true for asynchronous 
+  xmlHttp.send(null);
 }
 
 safari.application.addEventListener('message', handleMessage, false);
