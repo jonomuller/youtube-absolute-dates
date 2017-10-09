@@ -16,18 +16,25 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>Chrome</key>
+	<dict>
+		<key>Global Page</key>
+		<string>index.html</string>
+	</dict>
 	<key>Content</key>
 	<dict>
 		<key>Scripts</key>
 		<dict>
-			<key>Start</key>
+			<key>End</key>
 			<array>
-				<string>main.js</string>
+				<string>inject.js</string>
 			</array>
 		</dict>
 	</dict>
 	<key>Description</key>
 	<string>Converts relative dates on YouTube video thumbnails to absolute dates.</string>
+	<key>DeveloperIdentifier</key>
+	<string>0000000000</string>
 	<key>ExtensionInfoDictionaryVersion</key>
 	<string>1.0</string>
 	<key>Permissions</key>
@@ -37,6 +44,7 @@
 			<key>Allowed Domains</key>
 			<array>
 				<string>youtube.com</string>
+				<string>*.youtube.com</string>
 			</array>
 			<key>Include Secure Pages</key>
 			<true/>
