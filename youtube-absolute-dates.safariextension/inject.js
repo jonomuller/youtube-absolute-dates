@@ -1,3 +1,5 @@
+var els = [];
+
 function showResponse(response) {
   var responseString = JSON.stringify(response, '', 2);
   document.getElementById('response').innerHTML += responseString;
@@ -15,10 +17,9 @@ function replace() {
     }
 
     var el = s.querySelector('.yt-lockup-meta-info').getElementsByTagName('li')[1];
+    els.push(el);
 
-    search(s.getAttribute('data-context-item-id'), el, function callback(selector, date) {
-      selector.innerHTML = date;
-    });
+    search(s.getAttribute('data-context-item-id'), els.indexOf(el), formatDate);
   }
 }
 
@@ -38,6 +39,19 @@ function search(id, el, callback) {
   xmlHttp.send(null);
 }
 
+function formatDate(selector, date) {
+  var dict = {
+    selector: selector,
+    date: date
+  }
+  safari.self.tab.dispatchMessage('formatDate', JSON.stringify(dict));
+}
+
+function displayDate(selector, date) {
+  console.log(selector);
+  els[selector].innerHTML = date;
+}
+
 function handleMessage(event) {
   switch (event.name) {
     case 'videoDetails':
@@ -46,6 +60,10 @@ function handleMessage(event) {
       console.log(element.date);
       console.log(selector);
       selector.getElementsByClassName('yt-lockup-meta-info')[0].getElementsByTagName('li')[1].innerHTML = element.date;
+      break;
+    case 'dateFormatted':
+      var dict = JSON.parse(event.message);
+      displayDate(dict.selector, dict.date);
       break;
     default:
       break;
